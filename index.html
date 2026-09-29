@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulado Schaeffler — Treino</title>
+  <style>
+    :root{
+      --green:#0b7a3b;
+      --green-2:#0f9d58;
+      --bg:#f4f7f5;
+      --card:#ffffff;
+      --text:#17201b;
+      --muted:#66736b;
+      --border:#dfe7e2;
+      --danger:#c62828;
+      --ok:#137333;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:linear-gradient(135deg,var(--green),var(--green-2));color:#fff;padding:28px 18px}
+    .wrap{max-width:900px;margin:auto}
+    h1{margin:0 0 8px;font-size:clamp(28px,5vw,42px)}
+    header p{margin:4px 0;opacity:.95}
+    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+    .topbar .wrap{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:12px 18px}
+    .pill{padding:9px 13px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:700}
+    main{padding:22px 18px 60px}
+    .section-title{margin:30px 0 12px;font-size:24px}
+    .question{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 5px 16px rgba(0,0,0,.04)}
+    .question h3{margin:0 0 12px;font-size:17px;line-height:1.45}
+    .question p{line-height:1.55}
+    label.option{display:block;padding:10px 12px;margin:8px 0;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s;background:#fff}
+    label.option:hover{border-color:#9ccfb2;background:#f7fcf9}
+    input[type=radio]{margin-right:8px;accent-color:var(--green)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+    button{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer;font-size:15px}
+    .primary{background:var(--green);color:#fff}
+    .secondary{background:#e9efeb;color:var(--text)}
+    #result{display:none;margin-top:24px;padding:20px;border-radius:16px;background:#fff;border:1px solid var(--border)}
+    #result h2{margin-top:0}
+    .score{font-size:36px;font-weight:900;color:var(--green)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+    .mini{background:#f7faf8;border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center}
+    .wrong{margin-top:16px}
+    .wrong li{margin:6px 0}
+    .note{font-size:13px;color:var(--muted);margin-top:8px}
+    .formula{font-family:Georgia,serif;background:#f7faf8;padding:10px 12px;border-radius:10px;display:inline-block}
+    table{border-collapse:collapse;width:100%;max-width:420px;margin:10px 0}
+    th,td{border:1px solid var(--border);padding:8px;text-align:center}
+    @media(max-width:650px){.grid{grid-template-columns:1fr}.topbar .wrap{align-items:flex-start}.pill{font-size:13px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Simulado Schaeffler — Nível Difícil</h1>
+      <p>30 questões • Matemática, Português e Raciocínio Lógico</p>
+      <p><strong>Tempo sugerido:</strong> 2 horas</p>
+      <p class="note" style="color:#eafff1">Material de treino não oficial.</p>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="wrap">
+      <div class="pill" id="progress">0/30 respondidas</div>
+      <div class="pill" id="timer">02:00:00</div>
+    </div>
+  </div>
+
+  <main class="wrap" id="quiz"></main>
+
+  <script>
+    const questions = [
+      {area:'Matemática', q:'Um equipamento custa R$ 2.400,00. Recebe desconto de 15%, depois mais 8% sobre o valor já descontado e, em seguida, aumento de 10%. Qual é o preço final?', o:['R$ 2.020,80','R$ 2.040,00','R$ 2.064,48','R$ 2.112,00','R$ 2.160,00'], a:2},
+      {area:'Matemática', q:'Uma fábrica vendeu 35% do estoque pela manhã e 40% do que restou à tarde. Ao final sobraram 234 unidades. Quantas havia inicialmente?', o:['540','580','600','625','650'], a:2},
+      {area:'Matemática', q:'Um reservatório está com 40% da capacidade. Após receber 18 litros, passa a 70%. Qual é a capacidade total?', o:['48 L','54 L','60 L','64 L','72 L'], a:2},
+      {area:'Matemática', q:'Notas: prova 1 = 6,0 (peso 2), prova 2 = 7,5 (peso 3), prova 3 = 8,0 (peso 5). Qual é a média ponderada?', o:['7,25','7,35','7,40','7,45','7,50'], a:3},
+      {area:'Matemática', q:'Um salário recebeu aumento de 12% e depois uma redução percentual, ficando exatamente 3% acima do salário original. A redução foi aproximadamente de:', o:['7,14%','7,50%','8,04%','8,50%','9,00%'], a:2},
+      {area:'Matemática', q:'A máquina A produz 240 peças em 3h e B produz 300 em 5h. Trabalhando juntas por 4h, 20% das peças são rejeitadas. Quantas são aprovadas?', o:['420','432','448','456','480'], a:2},
+      {area:'Matemática', q:'Em uma turma, 2/5 escolheram o projeto A. Dos restantes, 1/3 escolheu B. Os 24 restantes escolheram C. Quantos alunos há?', o:['50','54','60','64','72'], a:2},
+      {area:'Matemática', q:'Produção: Jan 120, Fev 150, Mar 135, Abr 180. Fev+Abr é aproximadamente quantos por cento maior que Jan+Mar?', o:['25,0%','27,5%','28,4%','29,4%','30,0%'], a:3, table:true},
+      {area:'Matemática', q:'Resolva: 3/4(x − 8) + 5 = 2/3(x + 3).', o:['30','32','34','36','42'], a:3},
+      {area:'Matemática', q:'Uma loja aplica 25% de acréscimo sobre o custo e depois dá 12% de desconto sobre o preço de venda. Em relação ao custo inicial, o resultado é:', o:['prejuízo de 2%','lucro de 8%','lucro de 10%','lucro de 12%','lucro de 13%'], a:2},
+
+      {area:'Português', intro:'Em processos seletivos, rapidez costuma impressionar, mas nem sempre revela domínio. Quem lê depressa e precisa voltar ao enunciado várias vezes pode gastar mais tempo do que quem lê com método. A eficiência, portanto, não está em correr: está em decidir onde concentrar a atenção. Sob pressão, candidatos que distinguem informação essencial de detalhe acessório tendem a errar menos — não porque saibam tudo, mas porque organizam melhor o que sabem.', q:'A ideia central do texto é:', o:['O conhecimento é menos importante do que a velocidade.','Ler rapidamente é sempre prejudicial em uma avaliação.','O desempenho depende exclusivamente do domínio do conteúdo.','A eficiência está mais relacionada à organização da leitura do que à simples rapidez.','Candidatos lentos necessariamente obtêm melhores resultados.'], a:3},
+      {area:'Português', q:'No trecho “A eficiência, portanto, não está em correr”, a palavra “portanto” expressa ideia de:', o:['oposição','conclusão','causa','condição','comparação'], a:1},
+      {area:'Português', q:'Em “não porque saibam tudo, mas porque organizam melhor o que sabem”, a construção estabelece principalmente:', o:['duas causas equivalentes.','uma explicação seguida da correção da causa inicialmente considerada.','uma consequência inevitável.','uma comparação quantitativa.','uma condição necessária.'], a:1},
+      {area:'Português', q:'No trecho “candidatos que distinguem informação essencial...”, a palavra “que” funciona como:', o:['conjunção integrante.','pronome indefinido.','pronome relativo.','conjunção explicativa.','advérbio.'], a:2},
+      {area:'Português', q:'Qual alternativa preserva melhor o sentido de “A eficiência não está em correr: está em decidir onde concentrar a atenção.”?', o:['Ser eficiente significa executar todas as tarefas rapidamente.','Concentrar-se elimina a necessidade de administrar o tempo.','Eficiência significa priorizar adequadamente a atenção, e não apenas agir com rapidez.','Uma pessoa eficiente deve dedicar o mesmo tempo a todas as questões.','Quanto mais rapidamente uma pessoa lê, maior será sua concentração.'], a:2},
+      {area:'Português', q:'Assinale a frase em que a pontuação está correta.', o:['Os candidatos, que estudaram bastante conseguiram bons resultados.','Durante a prova os candidatos, permaneceram concentrados.','Quem conhece o conteúdo, porém, ainda precisa interpretar corretamente as questões.','Matemática português, e lógica exigem atenção.','Os candidatos que, revisaram a prova cometeram menos erros.'], a:2},
+      {area:'Português', q:'Assinale a alternativa com concordância correta.', o:['Fazem dois anos que ele estuda para processos seletivos.','Haviam muitos candidatos aguardando o início da avaliação.','Existe questões que exigem bastante atenção.','Devem existir diferentes maneiras de resolver o problema.','Faltou cinco candidatos no dia da avaliação.'], a:3},
+      {area:'Português', q:'Assinale a alternativa em que o uso da crase está correto.', o:['O candidato começou à estudar cedo.','A prova será entregue à todos os participantes.','Ele dedicou bastante tempo à revisão do conteúdo.','O candidato respondeu à uma questão difícil.','O fiscal permaneceu frente à frente à candidato.'], a:2},
+      {area:'Português', q:'Qual frase apresenta ambiguidade de sentido?', o:['O candidato resolveu rapidamente a última questão.','A supervisora informou ao candidato que seu documento estava incompleto.','Todos entregaram a prova antes do término.','O processo seletivo começará pela manhã.','O fiscal explicou novamente as instruções.'], a:1},
+      {area:'Português', q:'Assinale a alternativa em que todas as palavras estão grafadas corretamente.', o:['excessão – análise – raciocínio – necessário','exceção – análise – raciocínio – necessário','exceção – analize – raciocínio – nescessário','excessão – análise – raciocínio – nescessário','exceção – análise – raciocínio – nessessário'], a:1},
+
+      {area:'Lógica', q:'Observe a sequência: 2 – 6 – 15 – 31 – 56 – ?. Qual é o próximo número?', o:['81','86','90','92','96'], a:3},
+      {area:'Lógica', q:'Observe: 3 – 8 – 18 – 38 – 78 – ?. Qual é o próximo número?', o:['148','152','156','158','160'], a:3},
+      {area:'Lógica', q:'Se Ana estuda, então Bruno revisa. Se Bruno revisa, então Carla é aprovada. Carla não foi aprovada. O que necessariamente podemos concluir?', o:['Ana estudou, mas Bruno não revisou.','Bruno revisou, mas Ana não estudou.','Ana não estudou e Bruno não revisou.','Apenas Ana não estudou.','Não é possível concluir nada sobre Ana e Bruno.'], a:2},
+      {area:'Lógica', q:'Ana é mais velha que Bruno. Carlos é mais novo que Diego. Bruno é mais velho que Diego. Quem necessariamente é o mais velho?', o:['Ana','Bruno','Carlos','Diego','Não é possível determinar'], a:0},
+      {area:'Lógica', q:'Todo candidato aprovado em Lógica também foi aprovado em Matemática. Alguns aprovados em Português não foram aprovados em Matemática. Qual conclusão é necessariamente verdadeira?', o:['Todos que passaram em Português reprovaram em Lógica.','Alguns que passaram em Português não passaram em Lógica.','Todos que passaram em Matemática passaram em Português.','Alguns que passaram em Lógica reprovaram em Matemática.','Ninguém passou simultaneamente em Português e Lógica.'], a:1},
+      {area:'Lógica', q:'Regra: LUA → BVM. A palavra é invertida e cada letra é substituída pela próxima do alfabeto. Seguindo a mesma regra: SOL → ?', o:['MPT','MPS','LPT','NPT','MQT'], a:0},
+      {area:'Lógica', q:'A: “B está mentindo.” B: “C está mentindo.” C: “A e B estão mentindo.” Sabendo que exatamente uma afirmação é verdadeira, quem falou a verdade?', o:['Apenas A','Apenas B','Apenas C','A e C','Não é possível determinar'], a:1},
+      {area:'Lógica', q:'Em um grupo de 120 candidatos: 70 acertaram Matemática, 65 Português, 50 Lógica, 40 M∩P, 30 M∩L, 25 P∩L e 15 as três. Quantos acertaram exatamente duas matérias?', o:['35','40','45','50','55'], a:3},
+      {area:'Lógica', q:'X, Y e Z acontecerão segunda, terça e quarta, uma por dia. X não será segunda; Y será antes de X; Z não será quarta; Y não será terça. Qual é a ordem?', o:['Segunda X / Terça Z / Quarta Y','Segunda Y / Terça X / Quarta Z','Segunda Z / Terça Y / Quarta X','Segunda Y / Terça Z / Quarta X','Segunda Z / Terça X / Quarta Y'], a:3},
+      {area:'Lógica', q:'Descubra o padrão: 2, 3 → 13; 4, 5 → 41; 6, 7 → ?. Qual número substitui “?”', o:['72','78','83','85','91'], a:3}
+    ];
+
+    const letters = ['A','B','C','D','E'];
+    const quiz = document.getElementById('quiz');
+    const answered = new Set();
+    let currentArea = '';
+
+    questions.forEach((item, i) => {
+      if (item.area !== currentArea) {
+        currentArea = item.area;
+        const t = document.createElement('h2');
+        t.className = 'section-title';
+        t.textContent = currentArea === 'Lógica' ? '🧠 Raciocínio Lógico' : currentArea === 'Matemática' ? '🔢 Matemática' : '📖 Português';
+        quiz.appendChild(t);
+      }
+      const box = document.createElement('section');
+      box.className = 'question';
+      box.id = 'q'+(i+1);
+      if (item.intro) {
+        const p = document.createElement('p');
+        p.innerHTML = '<strong>Texto-base:</strong> ' + item.intro;
+        box.appendChild(p);
+      }
+      if (item.table) {
+        const table = document.createElement('table');
+        table.innerHTML = '<tr><th>Mês</th><th>Produção</th></tr><tr><td>Janeiro</td><td>120</td></tr><tr><td>Fevereiro</td><td>150</td></tr><tr><td>Março</td><td>135</td></tr><tr><td>Abril</td><td>180</td></tr>';
+        box.appendChild(table);
+      }
+      const h = document.createElement('h3');
+      h.textContent = `${i+1}. ${item.q}`;
+      box.appendChild(h);
+      item.o.forEach((opt, j) => {
+        const label = document.createElement('label');
+        label.className = 'option';
+        label.innerHTML = `<input type="radio" name="q${i}" value="${j}"> <strong>${letters[j]})</strong> ${opt}`;
+        box.appendChild(label);
+      });
+      quiz.appendChild(box);
+    });
+
+    const actions = document.createElement('div');
+    actions.className='actions';
+    actions.innerHTML='<button class="primary" id="submit">Finalizar simulado</button><button class="secondary" id="reset">Recomeçar</button>';
+    quiz.appendChild(actions);
+
+    const result = document.createElement('section');
+    result.id='result';
+    quiz.appendChild(result);
+
+    document.querySelectorAll('input[type=radio]').forEach(input => {
+      input.addEventListener('change', e => {
+        answered.add(e.target.name);
+        document.getElementById('progress').textContent = `${answered.size}/30 respondidas`;
+      });
+    });
+
+    let seconds = 2*60*60;
+    const timerEl = document.getElementById('timer');
+    const interval = setInterval(() => {
+      if (seconds <= 0) {
+        clearInterval(interval);
+        timerEl.textContent='00:00:00';
+        finish();
+        return;
+      }
+      seconds--;
+      const h = String(Math.floor(seconds/3600)).padStart(2,'0');
+      const m = String(Math.floor((seconds%3600)/60)).padStart(2,'0');
+      const s = String(seconds%60).padStart(2,'0');
+      timerEl.textContent=`${h}:${m}:${s}`;
+    },1000);
+
+    function finish(){
+      let total=0;
+      const byArea = {Matemática:[0,0],Português:[0,0],Lógica:[0,0]};
+      const wrong=[];
+      questions.forEach((item,i)=>{
+        const sel = document.querySelector(`input[name=q${i}]:checked`);
+        const val = sel ? Number(sel.value) : -1;
+        byArea[item.area][1]++;
+        if(val===item.a){ total++; byArea[item.area][0]++; }
+        else wrong.push({n:i+1, correct:letters[item.a], chosen:val>=0?letters[val]:'em branco'});
+      });
+      const pct = Math.round(total/30*100);
+      result.style.display='block';
+      result.innerHTML = `
+        <h2>Resultado</h2>
+        <div class="score">${total}/30 • ${pct}%</div>
+        <div class="grid">
+          <div class="mini"><strong>Matemática</strong><br>${byArea['Matemática'][0]}/10</div>
+          <div class="mini"><strong>Português</strong><br>${byArea['Português'][0]}/10</div>
+          <div class="mini"><strong>Lógica</strong><br>${byArea['Lógica'][0]}/10</div>
+        </div>
+        <div class="wrong">
+          <strong>Questões para revisar:</strong>
+          ${wrong.length ? '<ul>'+wrong.map(w=>`<li>Questão ${w.n}: você marcou <strong>${w.chosen}</strong>; correta: <strong>${w.correct}</strong>.</li>`).join('')+'</ul>' : '<p>Você acertou todas. Excelente desempenho!</p>'}
+        </div>
+      `;
+      result.scrollIntoView({behavior:'smooth'});
+    }
+
+    document.getElementById('submit').addEventListener('click', finish);
+    document.getElementById('reset').addEventListener('click', ()=>location.reload());
+  </script>
+</body>
+</html>
